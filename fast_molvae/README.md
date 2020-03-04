@@ -13,15 +13,12 @@ This gives you the vocabulary of cluster labels over the dataset `train.txt`.
 ## Training
 Step 1: Preprocess the data:
 ```
-python preprocess.py --train ../data/train.txt --split 100 --jobs 16
-mkdir moses-processed
-mv tensor* moses-processed
+python preprocess.py --train ../data/train.txt --split 100 --jobs 40 --output ./moses-processed
 ```
 This script will preprocess the training data (subgraph enumeration & tree decomposition), and save results into a list of files. We suggest you to use small value for `--split` if you are working with smaller datasets.
 
 Step 2: Train VAE model with KL annealing.
 ```
-mkdir vae_model/
 python vae_train.py --train moses-processed --vocab ../data/vocab.txt --save_dir vae_model/
 ```
 Default Options:
@@ -41,7 +38,7 @@ Please note that this is not necessarily the best annealing strategy. You are we
 ## Testing
 To sample new molecules with trained models, simply run
 ```
-python sample.py --nsample 30000 --vocab ../data/vocab.txt --hidden 450 --model moses-h450z56/model.iter-400000 > mol_samples.txt
+python sample.py --nsample 100 --vocab ../data/vocab.txt --hidden 450 --model vae_model/model.epoch-19 --output_file './sample.txt'
 ```
 
 This script prints in each line the SMILES string of each molecule. `model.iter-400000` is a model trained with 400K steps with the default hyperparameters. This should give you the same samples as in [moses-h450z56/sample.txt](moses-h450z56/sample.txt). The result is as follows:
