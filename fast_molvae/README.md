@@ -41,7 +41,7 @@ To sample new molecules with trained models, simply run
 python sample.py --nsample 100 --vocab ../data/vocab.txt --hidden 450 --model vae_model/model.epoch-19 --output_file './sample.txt'
 ```
 
-This script prints in each line the SMILES string of each molecule. `model.iter-400000` is a model trained with 400K steps with the default hyperparameters. This should give you the same samples as in [moses-h450z56/sample.txt](moses-h450z56/sample.txt). The result is as follows:
+This script prints in each line the SMILES string of each molecule. `model.epoch-19` is a model trained with 400K steps with the default hyperparameters. This should give you the same samples as in [sample.txt](sample.txt). The result is as follows:
 
 ```
 valid = 1.0
@@ -63,4 +63,35 @@ SA = 0.015992957588069068
 QED = 1.15692473423544e-05
 NP = 0.021087573878091237
 weight = 0.5403194879856983
+```
+
+
+
+
+#######################################
+# Bayesian Optimization
+
+For Bayesian optimization, we used the scripts from https://github.com/mkusner/grammarVAE
+
+This requires you to install their customized Theano library.
+Please see https://github.com/mkusner/grammarVAE#bayesian-optimization for installation.
+
+## Usage
+First generate the latent representation of all training molecules:
+```
+python gen_latent.py --data ../../data/train.txt --vocab ../../data/vocab.txt --hidden 450 --model ../vae_model/model.epoch-19
+```
+This generates `latent_features.txt` for latent vectors and other files for logP, synthetic accessability scores.
+
+To run Bayesian optimization:
+
+```
+python run_bo.py --vocab ../../data/vocab.txt --save_dir results --hidden 450 --seed 1 --model ../vae_model/model.epoch-19
+```
+It performs five iterations of Bayesian optimization with EI heuristics, and saves discovered molecules in `results/`
+Following previous work, we tried `seed` from 1 to 10.
+
+To summarize results accross 10 runs:
+```
+python print_result.py
 ```

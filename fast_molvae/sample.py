@@ -3,9 +3,34 @@ import torch.nn as nn
 
 import math, random, sys
 import argparse
-from fast_jtnn import *
+from .fast_jtnn import *
 import rdkit
 
+def load_model(vocab, model_path, hidden_size=450, latent_size=56, depthT=20, depthG=3):
+    vocab = [x.strip("\r\n ") for x in open(vocab)] 
+    vocab = Vocab(vocab)
+
+    model = JTNNVAE(vocab, hidden_size, latent_size, depthT, depthG)
+    dict_buffer = torch.load(model_path)
+    model.load_state_dict(dict_buffer)
+    model = model.cuda()
+
+    torch.manual_seed(0)
+    return model
+
+def sample(vocab, output_file, model_path, nsample, hidden_size=450, latent_size=56, depthT=20, depthG=3):
+    vocab = [x.strip("\r\n ") for x in open(vocab)] 
+    vocab = Vocab(vocab)
+
+    model = JTNNVAE(vocab, hidden_size, latent_size, depthT, depthG)
+    dict_buffer = torch.load(model_path)
+    model.load_state_dict(dict_buffer)
+    model = model.cuda()
+
+    torch.manual_seed(0)
+    with open(output_file, 'w') as out_file:
+        for i in range(nsample):
+            out_file.write(str(model.sample_prior())+'\n')
 
 if __name__ == '__main__':
     lg = rdkit.RDLogger.logger() 
@@ -22,15 +47,5 @@ if __name__ == '__main__':
     parser.add_argument('--depthG', type=int, default=3)
 
     args = parser.parse_args()
-
-    vocab = [x.strip("\r\n ") for x in open(args.vocab)] 
-    vocab = Vocab(vocab)
-
-    model = JTNNVAE(vocab, args.hidden_size, args.latent_size, args.depthT, args.depthG)
-    model.load_state_dict(torch.load(args.model))
-    model = model.cuda()
-
-    torch.manual_seed(0)
-    with open(args.output_file, 'w') as out_file:
-        for i in range(args.nsample):
-            out_file.write(str(model.sample_prior())+'\n')
+    
+    sample(args.vocab, args.output_file, args.model, args.nsample, args.hidden_size, args.latent_size, args.depthT, args.depthG)
