@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../')
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -16,7 +18,7 @@ import rdkit
 from tqdm import tqdm
 import os
 
-def vaetrain(train,
+def main_vae_train(train,
              vocab,
              save_dir,
              load_epoch=0,
@@ -100,8 +102,9 @@ def vaetrain(train,
 
             if total_step % kl_anneal_iter == 0 and total_step >= warmup:
                 beta = min(max_beta, beta + step_beta)
-        torch.save(model.state_dict(), save_dir + "/model.epoch-" + str(epoch))
-
+#         torch.save(model.state_dict(), save_dir + "/model.epoch-" + str(epoch))
+    torch.save(model.state_dict(), save_dir + "/model.epoch-" + str(epoch))
+    return model
 
 
 if __name__ == '__main__':
@@ -137,7 +140,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     print(args)
     
-    vaetrain(args.train,
+    main_vae_train(args.train,
              args.vocab,
              args.save_dir,
              args.load_epoch,

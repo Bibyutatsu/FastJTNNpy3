@@ -1,9 +1,11 @@
+import sys
+sys.path.append('../')
 import torch
 import torch.nn as nn
 
 import math, random, sys
 import argparse
-from .fast_jtnn import *
+from fast_jtnn import *
 import rdkit
 
 def load_model(vocab, model_path, hidden_size=450, latent_size=56, depthT=20, depthG=3):
@@ -18,7 +20,7 @@ def load_model(vocab, model_path, hidden_size=450, latent_size=56, depthT=20, de
     torch.manual_seed(0)
     return model
 
-def sample(vocab, output_file, model_path, nsample, hidden_size=450, latent_size=56, depthT=20, depthG=3):
+def main_sample(vocab, output_file, model_path, nsample, hidden_size=450, latent_size=56, depthT=20, depthG=3):
     vocab = [x.strip("\r\n ") for x in open(vocab)] 
     vocab = Vocab(vocab)
 
@@ -48,4 +50,4 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     
-    sample(args.vocab, args.output_file, args.model, args.nsample, args.hidden_size, args.latent_size, args.depthT, args.depthG)
+    main_sample(args.vocab, args.output_file, args.model, args.nsample, args.hidden_size, args.latent_size, args.depthT, args.depthG)

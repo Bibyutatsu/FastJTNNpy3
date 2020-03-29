@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../')
 import torch
 import torch.nn as nn
 from multiprocessing import Pool
@@ -32,7 +34,7 @@ def convert(train_path, pool, num_splits, output_path):
     lg.setLevel(rdkit.RDLogger.CRITICAL)
     
     out_path = os.path.join(output_path, './')
-    if os.path.isdir(out_path) is False
+    if os.path.isdir(out_path) is False:
         os.makedirs(out_path)
     
     with open(train_path) as f:
@@ -47,6 +49,13 @@ def convert(train_path, pool, num_splits, output_path):
     for split_id in tqdm(range(num_splits)):
         with open(os.path.join(output_path, 'tensors-%d.pkl' % split_id), 'wb') as f:
             pickle.dump(all_data_split[split_id], f)
+    
+    return True
+
+def main_preprocess(train_path, output_path, num_splits=10, njobs=os.cpu_count()):
+    pool = Pool(njobs)
+    convert(train_path, pool, num_splits, output_path)
+    return True
 
 if __name__ == "__main__":
     lg = rdkit.RDLogger.logger() 
