@@ -20,7 +20,9 @@ We highly recommend you to use conda for package management.
 This repository contains the Python 3 implementation of the new Fast Junction Tree Variational Autoencoder code.
 
 * `fast_molvae/` contains codes for VAE training. Please refer to `fast_molvae/README.md` for details.
-* `fast_molvae/fast_jtnn/` contains codes for model implementation.
+* `fast_jtnn/` contains codes for model implementation.
+* `fast_bo/` contains codes for Bayesian Optimisation (WIP: support for custom rdkit functions).
+* `fast_molopt/` contains codes for molecule optimisation using a JTpropVAE which is the same as JTVAE but also enmeds properties with the molecules. (WIP: integration in main pipeline)
 
 ## Old codes
 This repository contains the following directories:
